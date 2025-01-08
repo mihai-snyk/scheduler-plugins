@@ -297,3 +297,12 @@ type PowerModel struct {
 	// Power = K0 + K1 * e ^(K2 * x) : where x is utilisation
 	// Idle power of node will be K0 + K1
 }
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+type MultiObjectiveArgs struct {
+	metav1.TypeMeta `json:",inline"`
+
+	// User preferences for objective functions, stored as weights
+	ObjectiveWeights []float64 `json:"objectiveWeights,omitempty"`
+}

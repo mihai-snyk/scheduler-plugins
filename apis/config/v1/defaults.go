@@ -250,3 +250,10 @@ func SetDefaults_SySchedArgs(obj *SySchedArgs) {
 		obj.DefaultProfileName = &DefaultSySchedProfileName
 	}
 }
+
+// SetDefaults_MultiObjectiveArgs sets the default parameters for MultiObjectiveArgs plugin.
+func SetDefaults_MultiObjectiveArgs(obj *MultiObjectiveArgs) {
+	if len(obj.ObjectiveWeights) == 0 {
+		obj.ObjectiveWeights = []float64{0, 0, 0}
+	}
+}
