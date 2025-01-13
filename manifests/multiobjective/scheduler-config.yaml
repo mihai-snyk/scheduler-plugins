@@ -17,4 +17,4 @@ profiles:
   pluginConfig:
     - name: MultiObjective
       args:
-        objectiveWeights: [0, 0.5, 0.5]
+        objectiveWeights: [0.5, 0.5]

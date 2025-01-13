@@ -13,7 +13,15 @@ import (
 
 // PlotResults creates a scatter plot comparing the true Pareto front of the given Problem
 // with the final population resulted from the algorithm.
-func PlotResults(problem framework.Problem, finalPop []framework.Individual, algorithmName string) error {
+func PlotResults(results []framework.ObjectiveSpacePoint, problem framework.Problem, algorithmName string) error {
+	if len(results) == 0 {
+		return fmt.Errorf("results are empty for %s Benchmark", problem.Name())
+	}
+
+	if len(results[0]) != 2 {
+		return fmt.Errorf("can only plot 2D for %s Benchmark", problem.Name())
+	}
+
 	// Create scatter chart
 	scatter := charts.NewScatter()
 	scatter.SetGlobalOptions(
@@ -36,8 +44,7 @@ func PlotResults(problem framework.Problem, finalPop []framework.Individual, alg
 			SplitLine: &opts.SplitLine{
 				Show: opts.Bool(true),
 			},
-		}),
-	)
+		}))
 
 	trueParetoFront := problem.TrueParetoFront(100)
 	trueX := make([]opts.ScatterData, len(trueParetoFront))
@@ -49,10 +56,10 @@ func PlotResults(problem framework.Problem, finalPop []framework.Individual, alg
 		}
 	}
 
-	foundX := make([]opts.ScatterData, len(finalPop))
-	for i, ind := range finalPop {
+	foundX := make([]opts.ScatterData, len(results))
+	for i, res := range results {
 		foundX[i] = opts.ScatterData{
-			Value:      []float64{ind.Objectives[0], ind.Objectives[1]},
+			Value:      []float64{res[0], res[1]},
 			Symbol:     "triangle",
 			SymbolSize: 10,
 		}

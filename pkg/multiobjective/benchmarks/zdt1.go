@@ -2,6 +2,7 @@ package benchmarks
 
 import (
 	"math"
+	"math/rand/v2"
 
 	"sigs.k8s.io/scheduler-plugins/pkg/multiobjective/framework"
 )
@@ -34,33 +35,51 @@ func (p *ZDT1) ObjectiveFuncs() []framework.ObjectiveFunc {
 }
 
 // F1 is the first ZD1 benchmark objective
-func (p *ZDT1) f1(x []float64) float64 {
-	return x[0]
+func (p *ZDT1) f1(x framework.Solution) float64 {
+	xx := x.(*framework.RealSolution)
+	return xx.Variables[0]
 }
 
 // F2 is the first ZD1 benchmark objective
-func (p *ZDT1) f2(x []float64) float64 {
+func (p *ZDT1) f2(x framework.Solution) float64 {
+	xx := x.(*framework.RealSolution).Variables
 	g := 1.0
-	for i := 1; i < len(x); i++ {
-		g += 9.0 * x[i] / float64(len(x)-1)
+	for i := 1; i < len(xx); i++ {
+		g += 9.0 * xx[i] / float64(len(xx)-1)
 	}
-	return g * (1.0 - math.Sqrt(x[0]/g))
+	return g * (1.0 - math.Sqrt(xx[0]/g))
 }
 
-func (p *ZDT1) LowerBounds() []float64 {
-	varMin := make([]float64, p.numVars)
-	for i := range p.numVars {
-		varMin[i] = 0.0
-	}
-	return varMin
+// This is an unconstrained problem
+func (p *ZDT1) Constraints() []framework.Constraint {
+	return nil
 }
 
-func (p *ZDT1) UpperBounds() []float64 {
-	varMax := make([]float64, p.numVars)
+func (p *ZDT1) Bounds() []framework.Bounds {
+	b := make([]framework.Bounds, p.numVars)
 	for i := range p.numVars {
-		varMax[i] = 1.0
+		b[i] = framework.Bounds{
+			L: 0.0,
+			H: 1.0,
+		}
 	}
-	return varMax
+	return b
+}
+
+// Initialize creates an initial random population of individuals
+func (p *ZDT1) Initialize(popSize int) []framework.Solution {
+	population := make([]framework.Solution, popSize)
+	b := p.Bounds()
+
+	for i := 0; i < popSize; i++ {
+		vars := make([]float64, p.numVars)
+		for j := 0; j < p.numVars; j++ {
+			vars[j] = b[j].L + rand.Float64()*(b[j].H-b[j].L)
+		}
+		sol := framework.NewRealSolution(vars, b)
+		population[i] = sol
+	}
+	return population
 }
 
 // TrueParetoFront generates numPoints points on the true Pareto front for ZDT1
