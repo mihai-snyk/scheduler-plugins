@@ -22,28 +22,46 @@ import (
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
 	testing "k8s.io/client-go/testing"
-	v1alpha1 "sigs.k8s.io/scheduler-plugins/apis/scheduling/v1alpha1"
+	v1alpha1 "sigs.k8s.io/scheduler-plugins/apis/descheduler/v1alpha1"
+	schedulingv1alpha1 "sigs.k8s.io/scheduler-plugins/apis/scheduling/v1alpha1"
+	deschedulerv1alpha1 "sigs.k8s.io/scheduler-plugins/pkg/generated/applyconfiguration/descheduler/v1alpha1"
 	internal "sigs.k8s.io/scheduler-plugins/pkg/generated/applyconfiguration/internal"
-	schedulingv1alpha1 "sigs.k8s.io/scheduler-plugins/pkg/generated/applyconfiguration/scheduling/v1alpha1"
+	applyconfigurationschedulingv1alpha1 "sigs.k8s.io/scheduler-plugins/pkg/generated/applyconfiguration/scheduling/v1alpha1"
 )
 
 // ForKind returns an apply configuration type for the given GroupVersionKind, or nil if no
 // apply configuration type exists for the given GroupVersionKind.
 func ForKind(kind schema.GroupVersionKind) interface{} {
 	switch kind {
-	// Group=scheduling.x-k8s.io, Version=v1alpha1
-	case v1alpha1.SchemeGroupVersion.WithKind("ElasticQuota"):
-		return &schedulingv1alpha1.ElasticQuotaApplyConfiguration{}
-	case v1alpha1.SchemeGroupVersion.WithKind("ElasticQuotaSpec"):
-		return &schedulingv1alpha1.ElasticQuotaSpecApplyConfiguration{}
-	case v1alpha1.SchemeGroupVersion.WithKind("ElasticQuotaStatus"):
-		return &schedulingv1alpha1.ElasticQuotaStatusApplyConfiguration{}
-	case v1alpha1.SchemeGroupVersion.WithKind("PodGroup"):
-		return &schedulingv1alpha1.PodGroupApplyConfiguration{}
-	case v1alpha1.SchemeGroupVersion.WithKind("PodGroupSpec"):
-		return &schedulingv1alpha1.PodGroupSpecApplyConfiguration{}
-	case v1alpha1.SchemeGroupVersion.WithKind("PodGroupStatus"):
-		return &schedulingv1alpha1.PodGroupStatusApplyConfiguration{}
+	// Group=descheduler.io, Version=v1alpha1
+	case v1alpha1.SchemeGroupVersion.WithKind("ObjectiveValues"):
+		return &deschedulerv1alpha1.ObjectiveValuesApplyConfiguration{}
+	case v1alpha1.SchemeGroupVersion.WithKind("OptimizationSolution"):
+		return &deschedulerv1alpha1.OptimizationSolutionApplyConfiguration{}
+	case v1alpha1.SchemeGroupVersion.WithKind("ReplicaSetDistribution"):
+		return &deschedulerv1alpha1.ReplicaSetDistributionApplyConfiguration{}
+	case v1alpha1.SchemeGroupVersion.WithKind("ReplicaSetMovement"):
+		return &deschedulerv1alpha1.ReplicaSetMovementApplyConfiguration{}
+	case v1alpha1.SchemeGroupVersion.WithKind("SchedulingHint"):
+		return &deschedulerv1alpha1.SchedulingHintApplyConfiguration{}
+	case v1alpha1.SchemeGroupVersion.WithKind("SchedulingHintSpec"):
+		return &deschedulerv1alpha1.SchedulingHintSpecApplyConfiguration{}
+	case v1alpha1.SchemeGroupVersion.WithKind("SchedulingHintStatus"):
+		return &deschedulerv1alpha1.SchedulingHintStatusApplyConfiguration{}
+
+		// Group=scheduling.x-k8s.io, Version=v1alpha1
+	case schedulingv1alpha1.SchemeGroupVersion.WithKind("ElasticQuota"):
+		return &applyconfigurationschedulingv1alpha1.ElasticQuotaApplyConfiguration{}
+	case schedulingv1alpha1.SchemeGroupVersion.WithKind("ElasticQuotaSpec"):
+		return &applyconfigurationschedulingv1alpha1.ElasticQuotaSpecApplyConfiguration{}
+	case schedulingv1alpha1.SchemeGroupVersion.WithKind("ElasticQuotaStatus"):
+		return &applyconfigurationschedulingv1alpha1.ElasticQuotaStatusApplyConfiguration{}
+	case schedulingv1alpha1.SchemeGroupVersion.WithKind("PodGroup"):
+		return &applyconfigurationschedulingv1alpha1.PodGroupApplyConfiguration{}
+	case schedulingv1alpha1.SchemeGroupVersion.WithKind("PodGroupSpec"):
+		return &applyconfigurationschedulingv1alpha1.PodGroupSpecApplyConfiguration{}
+	case schedulingv1alpha1.SchemeGroupVersion.WithKind("PodGroupStatus"):
+		return &applyconfigurationschedulingv1alpha1.PodGroupStatusApplyConfiguration{}
 
 	}
 	return nil

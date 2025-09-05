@@ -10,11 +10,10 @@ profiles:
     multiPoint:
       enabled:
         - name: MultiObjective
-          weight: 5
+          weight: 10
     score:
-      disabled:
+      enabled:
         - name: NodeResourcesFit
+          weight: 1
   pluginConfig:
     - name: MultiObjective
-      args:
-        objectiveWeights: [0.5, 0.5]

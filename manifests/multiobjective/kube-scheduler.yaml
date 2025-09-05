@@ -18,7 +18,7 @@ spec:
       nodeSelector:
         node-role.kubernetes.io/control-plane: ""
       containers:
-        - image: paravirtualtishu/scheduler-plugins:v0.0.0
+        - image: paravirtualtishu/scheduler-plugins:v1.0.2
           imagePullPolicy: Always
           args:
           - --authentication-kubeconfig=/etc/kubernetes/scheduler.conf

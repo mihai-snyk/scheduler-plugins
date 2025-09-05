@@ -28,6 +28,7 @@ import (
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
 	cache "k8s.io/client-go/tools/cache"
 	versioned "sigs.k8s.io/scheduler-plugins/pkg/generated/clientset/versioned"
+	descheduler "sigs.k8s.io/scheduler-plugins/pkg/generated/informers/externalversions/descheduler"
 	internalinterfaces "sigs.k8s.io/scheduler-plugins/pkg/generated/informers/externalversions/internalinterfaces"
 	scheduling "sigs.k8s.io/scheduler-plugins/pkg/generated/informers/externalversions/scheduling"
 )
@@ -254,7 +255,12 @@ type SharedInformerFactory interface {
 	// client.
 	InformerFor(obj runtime.Object, newFunc internalinterfaces.NewInformerFunc) cache.SharedIndexInformer
 
+	Descheduler() descheduler.Interface
 	Scheduling() scheduling.Interface
+}
+
+func (f *sharedInformerFactory) Descheduler() descheduler.Interface {
+	return descheduler.New(f, f.namespace, f.tweakListOptions)
 }
 
 func (f *sharedInformerFactory) Scheduling() scheduling.Interface {

@@ -27,7 +27,7 @@ CONTROLLER_GEN_VER=v0.16.5
 CONTROLLER_GEN_BIN=controller-gen
 CONTROLLER_GEN=${TOOLS_BIN_DIR}/${CONTROLLER_GEN_BIN}-${CONTROLLER_GEN_VER}
 # Need v1 to support defaults in CRDs, unfortunately limiting us to k8s 1.16+
-CRD_OPTIONS="crd:crdVersions=v1"
+CRD_OPTIONS="crd:crdVersions=v1,allowDangerousTypes=true"
 
 GOBIN=${TOOLS_BIN_DIR} ${GO_INSTALL} sigs.k8s.io/controller-tools/cmd/controller-gen ${CONTROLLER_GEN_BIN} ${CONTROLLER_GEN_VER}
 
@@ -48,8 +48,10 @@ kube::codegen::gen_client \
   "${SCRIPT_ROOT}/apis"
 
 ${CONTROLLER_GEN} object:headerFile="hack/boilerplate/boilerplate.generatego.txt" \
-  paths="./apis/scheduling/..."
+  paths="./apis/scheduling/..." \
+  paths="./apis/descheduler/..."
 
 ${CONTROLLER_GEN} ${CRD_OPTIONS} rbac:roleName=work-manager webhook \
   paths="./apis/scheduling/..." \
+  paths="./apis/descheduler/..." \
   output:crd:artifacts:config=config/crd/bases

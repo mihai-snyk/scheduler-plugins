@@ -40,6 +40,8 @@ fi
 cd "${SCRIPT_ROOT}"
 IMAGE_BUILD_CMD=${DOCKER_BUILDX_CMD:-${BUILDER} buildx}
 
+echo "the IMAGE_BUILD_CMD ${IMAGE_BUILD_CMD}" 
+
 # use RELEASE_VERSION==v0.0.0 to tell if it's a local image build.
 BLD_INSTANCE=""
 if [[ "${RELEASE_VERSION}" == "v0.0.0" ]]; then
@@ -55,7 +57,7 @@ ${IMAGE_BUILD_CMD} build \
   --build-arg GO_BASE_IMAGE=${GO_BASE_IMAGE} \
   --build-arg DISTROLESS_BASE_IMAGE=${DISTROLESS_BASE_IMAGE} \
   --build-arg CGO_ENABLED=0 \
-  ${EXTRA_ARGS:-}  ${TAG_FLAG:-} ${REGISTRY}/${IMAGE} .
+  ${EXTRA_ARGS:-}  ${TAG_FLAG:-} ${REGISTRY}:${RELEASE_VERSION} .
 
 ${IMAGE_BUILD_CMD} build \
   --platform=${PLATFORMS} \
@@ -69,3 +71,6 @@ ${IMAGE_BUILD_CMD} build \
 if [[ ! -z $BLD_INSTANCE ]]; then
   ${DOCKER_BUILDX_CMD:-${BUILDER} buildx} rm $BLD_INSTANCE
 fi
+
+# TO REMOVE
+docker push ${REGISTRY}:${RELEASE_VERSION}

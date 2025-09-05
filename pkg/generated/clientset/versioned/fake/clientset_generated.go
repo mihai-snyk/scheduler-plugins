@@ -26,6 +26,8 @@ import (
 	"k8s.io/client-go/testing"
 	applyconfiguration "sigs.k8s.io/scheduler-plugins/pkg/generated/applyconfiguration"
 	clientset "sigs.k8s.io/scheduler-plugins/pkg/generated/clientset/versioned"
+	deschedulerv1alpha1 "sigs.k8s.io/scheduler-plugins/pkg/generated/clientset/versioned/typed/descheduler/v1alpha1"
+	fakedeschedulerv1alpha1 "sigs.k8s.io/scheduler-plugins/pkg/generated/clientset/versioned/typed/descheduler/v1alpha1/fake"
 	schedulingv1alpha1 "sigs.k8s.io/scheduler-plugins/pkg/generated/clientset/versioned/typed/scheduling/v1alpha1"
 	fakeschedulingv1alpha1 "sigs.k8s.io/scheduler-plugins/pkg/generated/clientset/versioned/typed/scheduling/v1alpha1/fake"
 )
@@ -115,6 +117,11 @@ var (
 	_ clientset.Interface = &Clientset{}
 	_ testing.FakeClient  = &Clientset{}
 )
+
+// DeschedulerV1alpha1 retrieves the DeschedulerV1alpha1Client
+func (c *Clientset) DeschedulerV1alpha1() deschedulerv1alpha1.DeschedulerV1alpha1Interface {
+	return &fakedeschedulerv1alpha1.FakeDeschedulerV1alpha1{Fake: &c.Fake}
+}
 
 // SchedulingV1alpha1 retrieves the SchedulingV1alpha1Client
 func (c *Clientset) SchedulingV1alpha1() schedulingv1alpha1.SchedulingV1alpha1Interface {

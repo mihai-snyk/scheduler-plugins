@@ -1,0 +1,34 @@
+---
+# ClusterRole for MultiObjective scheduler to access scheduling hints
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: system:kube-scheduler:multiobjective
+rules:
+# Existing scheduler-plugins permissions
+- apiGroups: ["scheduling.x-k8s.io"]
+  resources: ["podgroups", "elasticquotas", "podgroups/status", "elasticquotas/status"]
+  verbs: ["get", "list", "watch", "create", "delete", "update", "patch"]
+# Permissions for descheduler scheduling hints
+- apiGroups: ["descheduler.io"]
+  resources: ["schedulinghints", "schedulinghints/status"]
+  verbs: ["get", "list", "watch", "update", "patch"]
+---
+# ClusterRoleBinding for the scheduler
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: system:kube-scheduler:multiobjective
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:kube-scheduler:multiobjective
+subjects:
+# Bind to the default scheduler service account in kube-system
+- kind: ServiceAccount
+  name: default
+  namespace: kube-system
+# Also bind to the standard kube-scheduler user for compatibility
+- apiGroup: rbac.authorization.k8s.io
+  kind: User
+  name: system:kube-scheduler

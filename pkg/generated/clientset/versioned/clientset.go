@@ -25,18 +25,26 @@ import (
 	discovery "k8s.io/client-go/discovery"
 	rest "k8s.io/client-go/rest"
 	flowcontrol "k8s.io/client-go/util/flowcontrol"
+	deschedulerv1alpha1 "sigs.k8s.io/scheduler-plugins/pkg/generated/clientset/versioned/typed/descheduler/v1alpha1"
 	schedulingv1alpha1 "sigs.k8s.io/scheduler-plugins/pkg/generated/clientset/versioned/typed/scheduling/v1alpha1"
 )
 
 type Interface interface {
 	Discovery() discovery.DiscoveryInterface
+	DeschedulerV1alpha1() deschedulerv1alpha1.DeschedulerV1alpha1Interface
 	SchedulingV1alpha1() schedulingv1alpha1.SchedulingV1alpha1Interface
 }
 
 // Clientset contains the clients for groups.
 type Clientset struct {
 	*discovery.DiscoveryClient
-	schedulingV1alpha1 *schedulingv1alpha1.SchedulingV1alpha1Client
+	deschedulerV1alpha1 *deschedulerv1alpha1.DeschedulerV1alpha1Client
+	schedulingV1alpha1  *schedulingv1alpha1.SchedulingV1alpha1Client
+}
+
+// DeschedulerV1alpha1 retrieves the DeschedulerV1alpha1Client
+func (c *Clientset) DeschedulerV1alpha1() deschedulerv1alpha1.DeschedulerV1alpha1Interface {
+	return c.deschedulerV1alpha1
 }
 
 // SchedulingV1alpha1 retrieves the SchedulingV1alpha1Client
@@ -88,6 +96,10 @@ func NewForConfigAndClient(c *rest.Config, httpClient *http.Client) (*Clientset,
 
 	var cs Clientset
 	var err error
+	cs.deschedulerV1alpha1, err = deschedulerv1alpha1.NewForConfigAndClient(&configShallowCopy, httpClient)
+	if err != nil {
+		return nil, err
+	}
 	cs.schedulingV1alpha1, err = schedulingv1alpha1.NewForConfigAndClient(&configShallowCopy, httpClient)
 	if err != nil {
 		return nil, err
@@ -113,6 +125,7 @@ func NewForConfigOrDie(c *rest.Config) *Clientset {
 // New creates a new Clientset for the given RESTClient.
 func New(c rest.Interface) *Clientset {
 	var cs Clientset
+	cs.deschedulerV1alpha1 = deschedulerv1alpha1.New(c)
 	cs.schedulingV1alpha1 = schedulingv1alpha1.New(c)
 
 	cs.DiscoveryClient = discovery.NewDiscoveryClient(c)

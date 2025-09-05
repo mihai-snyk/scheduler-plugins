@@ -72,8 +72,8 @@ build-images:
 
 .PHONY: local-image
 local-image: PLATFORMS="linux/$$(uname -m)"
-local-image: RELEASE_VERSION="v0.0.0"
-local-image: REGISTRY="localhost:5000/scheduler-plugins"
+local-image: RELEASE_VERSION="v1.0.2"
+local-image: REGISTRY="paravirtualtishu/scheduler-plugins"
 local-image: EXTRA_ARGS="--load"
 local-image: clean build-images
 
